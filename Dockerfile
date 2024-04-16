@@ -38,9 +38,12 @@ RUN chmod +x bin/* && \
     sed -i "s/\r$//g" bin/* && \
     sed -i 's/ruby\.exe$/ruby/' bin/*
 
-# Precompiling assets for production without requiring secret RAILS_MASTER_KEY
-RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
+# Check for any syntax errors in assets and install any missing gems
+RUN bundle exec rake assets:check && \
+    bundle install
 
+# If the above command succeeds, precompile the assets
+RUN if [ $? -eq 0 ]; then SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile; fi
 
 # Final stage for app image
 FROM base
