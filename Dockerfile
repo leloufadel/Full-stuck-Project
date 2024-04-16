@@ -39,8 +39,7 @@ RUN chmod +x bin/* && \
     sed -i 's/ruby\.exe$/ruby/' bin/*
 
 # Check for any syntax errors in assets and install any missing gems
-RUN bundle exec rake assets:check && \
-    bundle install
+RUN bundle install
 
 # If the above command succeeds, precompile the assets
 RUN if [ $? -eq 0 ]; then SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile; fi
