@@ -1,8 +1,11 @@
-#!/bin/bash -e
+#!/bin/bash
+set -e
 
-# If running the rails server then create or migrate existing database
-if [ "${1}" == "./bin/rails" ] && [ "${2}" == "server" ]; then
-  ./bin/rails db:prepare
+# If the command passed is 'rails server', then we need to set up the database
+if [ "$1" = 'rails' ] && [ "$2" = 'server' ]; then
+  bin/rails db:create
+  bin/rails db:migrate
+  bin/rails db:seed
 fi
 
-exec "${@}"
+exec "$@"
