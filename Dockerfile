@@ -42,7 +42,7 @@ RUN chmod +x bin/* && \
 RUN bundle install
 
 # If the above command succeeds, precompile the assets
-RUN if [ $? -eq 0 ]; then SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile; fi
+RUN if [ $? -eq 0 ]; then SECRET_KEY_BASE=$(rails secret) ./bin/rails assets:precompile; fi
 
 # Final stage for app image
 FROM base
