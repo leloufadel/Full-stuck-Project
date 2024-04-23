@@ -55,6 +55,7 @@ COPY --from=build /rails /rails
 
 # Copy the entrypoint script into the image
 COPY bin/docker-entrypoint /rails/bin/
+RUN chmod +x /rails/bin/docker-entrypoint
 
 # Run and own only the runtime files as a non-root user for security
 RUN useradd rails --create-home --shell /bin/bash && \
