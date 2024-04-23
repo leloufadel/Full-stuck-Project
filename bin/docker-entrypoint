@@ -1,8 +1,17 @@
 #!/bin/bash
 set -e
 
+# Wait for the database server to be ready
+until bin/rails db:exists; do
+  echo "Database server is unavailable - sleeping"
+  sleep 1
+done
+
+echo "Database server is up - executing command"
+
 # If the command passed is 'rails server', then we need to set up the database
 if [ "$1" = 'rails' ] && [ "$2" = 'server' ]; then
+  echo "Preparing database..."
   bin/rails db:create
   bin/rails db:migrate
   bin/rails db:seed
