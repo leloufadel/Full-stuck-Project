@@ -2,7 +2,7 @@
 set -e
 
 # Wait for the database server to be ready
-until bin/rails db:exists; do
+until bin/rails db:migrate:status &>/dev/null; do
   echo "Database server is unavailable - sleeping"
   sleep 1
 done
