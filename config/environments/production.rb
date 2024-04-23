@@ -94,5 +94,5 @@ Rails.application.configure do
   # ]
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
-  config.hosts<<"full-stuck-project-production.up.railway.app"
+  config.hosts << "page-to-page-library-backend-production.up.railway.app"
 end
