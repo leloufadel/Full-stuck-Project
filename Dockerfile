@@ -41,9 +41,6 @@ RUN chmod +x bin/* && \
 # Check for any syntax errors in assets and install any missing gems
 RUN bundle install
 
-# If the above command succeeds, precompile the assets
-RUN if [ $? -eq 0 ]; then SECRET_KEY_BASE=$(rails secret) ./bin/rails assets:precompile; fi
-
 # Final stage for app image
 FROM base
 
