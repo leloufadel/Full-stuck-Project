@@ -13,7 +13,6 @@ ENV RAILS_ENV="production" \
     BUNDLE_PATH="/usr/local/bundle" \
     BUNDLE_WITHOUT="development"
 
-
 # Throw-away build stage to reduce size of final image
 FROM base as build
 
@@ -53,6 +52,9 @@ RUN apt-get update -qq && \
 COPY --from=build /usr/local/bundle /usr/local/bundle
 COPY --from=build /rails /rails
 
+# Add the bin directory of the installed gems to the PATH
+ENV PATH="/usr/local/bundle/bin:${PATH}"
+
 # Copy the entrypoint script into the image
 COPY bin/docker-entrypoint /rails/bin/
 RUN chmod +x /rails/bin/docker-entrypoint
@@ -67,4 +69,4 @@ ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
-CMD ["rails", "server"]
+CMD ["./bin/rails", "server"]
