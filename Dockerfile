@@ -13,7 +13,6 @@ ENV RAILS_ENV="production" \
     BUNDLE_PATH="/usr/local/bundle" \
     BUNDLE_WITHOUT="development"
 
-
 # Throw-away build stage to reduce size of final image
 FROM base as build
 
@@ -38,9 +37,8 @@ RUN chmod +x bin/* && \
     sed -i "s/\r$//g" bin/* && \
     sed -i 's/ruby\.exe$/ruby/' bin/*
 
-# Precompiling assets for production without requiring secret RAILS_MASTER_KEY
-RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
-
+# Check for any syntax errors in assets and install any missing gems
+RUN bundle install
 
 # Final stage for app image
 FROM base
@@ -53,6 +51,13 @@ RUN apt-get update -qq && \
 # Copy built artifacts: gems, application
 COPY --from=build /usr/local/bundle /usr/local/bundle
 COPY --from=build /rails /rails
+
+# Add the bin directory of the installed gems to the PATH
+ENV PATH="/usr/local/bundle/bin:${PATH}"
+
+# Copy the entrypoint script into the image
+COPY bin/docker-entrypoint /rails/bin/
+RUN chmod +x /rails/bin/docker-entrypoint
 
 # Run and own only the runtime files as a non-root user for security
 RUN useradd rails --create-home --shell /bin/bash && \

@@ -17,6 +17,3 @@ test:
 production:
   <<: *default
   url: <%= ENV['DATABASE_URL'] %>
-  database: full_stuck_project_production
-  username: full_stuck_project
-  password: <%= ENV["HELLO_RAILS_DATABASE_PASSWORD"] %>

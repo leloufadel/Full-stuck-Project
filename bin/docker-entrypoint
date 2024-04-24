@@ -1,8 +1,30 @@
-#!/bin/bash -e
+#!/bin/bash
+set -e
 
-# If running the rails server then create or migrate existing database
-if [ "${1}" == "./bin/rails" ] && [ "${2}" == "server" ]; then
-  ./bin/rails db:prepare
+# Wait for the database server to be ready
+until bin/rails db:version; do
+  echo "Database server is unavailable - sleeping"
+  sleep 1
+done
+
+echo "Database server is up - executing command"
+
+# If the command passed is 'rails server', then we need to set up the database
+if [ "$1" = 'rails' ] && [ "$2" = 'server' ]; then
+  # Check if the database exists
+  if bin/rails db:version; then
+    echo "Database exists, skipping creation and seeding"
+  else
+    echo "Preparing database..."
+    bin/rails db:create
+    bin/rails db:migrate
+    bin/rails db:seed
+  fi
+
+  if [ -f tmp/pids/server.pid ]; then
+    echo "Deleting server PID file..."
+    rm tmp/pids/server.pid
+  fi
 fi
 
-exec "${@}"
+exec "$@"
