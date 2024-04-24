@@ -20,6 +20,11 @@ if [ "$1" = 'rails' ] && [ "$2" = 'server' ]; then
     bin/rails db:migrate
     bin/rails db:seed
   fi
+
+  if [ -f tmp/pids/server.pid ]; then
+    echo "Deleting server PID file..."
+    rm tmp/pids/server.pid
+  fi
 fi
 
 exec "$@"
